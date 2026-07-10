@@ -1,3 +1,4 @@
+import Dashboard from './components/Dashboard/Dashboard';
 import { useState, useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar/Navbar';
 import TransactionTable from './components/TransactionTable/TransactionTable';
@@ -89,6 +90,7 @@ function App() {
   return (
     <div>
       <Navbar />
+      <Dashboard transactions={transactions} />
       <TransactionForm
         categories={categories}
         onTransactionAdded={handleTransactionAdded}
