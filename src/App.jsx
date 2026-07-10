@@ -1,13 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar/Navbar';
 import TransactionTable from './components/TransactionTable/TransactionTable';
 import TransactionForm from './components/TransactionForm/TransactionForm';
+import Filters from './components/Filters/Filters';
 
 function App() {
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [filters, setFilters] = useState({
+    category: '',
+    startDate: '',
+    endDate: ''
+  });
 
   const getData = async () => {
     try {
@@ -44,6 +51,41 @@ function App() {
     setTransactions((prev) => [...prev, newTransaction]);
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Bu işlemi silmek istediğine emin misin?')) return;
+
+    const previousTransactions = transactions;
+    // Optimistic UI: önce ekrandan kaldır
+    setTransactions((prev) => prev.filter((t) => t._id !== id));
+
+    try {
+      const response = await fetch(`http://localhost:3000/api/transactions/${id}`, {
+        method: 'DELETE'
+      });
+      if (!response.ok) throw new Error('Silinemedi');
+    } catch (err) {
+      // Hata olursa eski haline geri dön
+      setTransactions(previousTransactions);
+      alert('Silme başarısız oldu, tekrar deneyin.');
+    }
+  };
+
+  // Filtrelenmiş listeyi hesapla — sadece transactions veya filters değişince yeniden hesaplanır
+  const filteredTransactions = useMemo(() => {
+    return transactions.filter((t) => {
+      if (filters.category && t.category?._id !== filters.category) {
+        return false;
+      }
+      if (filters.startDate && new Date(t.date) < new Date(filters.startDate)) {
+        return false;
+      }
+      if (filters.endDate && new Date(t.date) > new Date(filters.endDate)) {
+        return false;
+      }
+      return true;
+    });
+  }, [transactions, filters]);
+
   return (
     <div>
       <Navbar />
@@ -51,10 +93,16 @@ function App() {
         categories={categories}
         onTransactionAdded={handleTransactionAdded}
       />
+      <Filters
+        categories={categories}
+        filters={filters}
+        onFilterChange={setFilters}
+      />
       <TransactionTable
-        transactions={transactions}
+        transactions={filteredTransactions}
         loading={loading}
         error={error}
+        onDelete={handleDelete}
       />
     </div>
   );

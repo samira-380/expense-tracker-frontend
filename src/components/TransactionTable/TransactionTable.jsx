@@ -1,4 +1,4 @@
-function TransactionTable({ transactions, loading, error }) {
+function TransactionTable({ transactions, loading, error, onDelete }) {
   if (loading) {
     return <p>Yükleniyor...</p>;
   }
@@ -18,6 +18,7 @@ function TransactionTable({ transactions, loading, error }) {
           <th>Tutar</th>
           <th>Tip</th>
           <th>Kategori</th>
+          <th>İşlem</th>
         </tr>
       </thead>
       <tbody>
@@ -26,6 +27,9 @@ function TransactionTable({ transactions, loading, error }) {
             <td>{t.amount}</td>
             <td>{t.type}</td>
             <td>{t.category?.name}</td>
+            <td>
+              <button onClick={() => onDelete(t._id)}>Sil</button>
+            </td>
           </tr>
         ))}
       </tbody>
