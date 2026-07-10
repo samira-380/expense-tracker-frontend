@@ -1,3 +1,4 @@
+import './App.css';
 import Dashboard from './components/Dashboard/Dashboard';
 import { useState, useEffect, useMemo } from 'react';
 import Navbar from './components/Navbar/Navbar';
@@ -87,25 +88,33 @@ function App() {
     });
   }, [transactions, filters]);
 
-  return (
-    <div>
+   return (
+    <div className="app">
       <Navbar />
-      <Dashboard transactions={transactions} />
-      <TransactionForm
-        categories={categories}
-        onTransactionAdded={handleTransactionAdded}
-      />
-      <Filters
-        categories={categories}
-        filters={filters}
-        onFilterChange={setFilters}
-      />
-      <TransactionTable
-        transactions={filteredTransactions}
-        loading={loading}
-        error={error}
-        onDelete={handleDelete}
-      />
+      <div className="dashboard-section">
+        <Dashboard transactions={transactions} />
+      </div>
+      <div className="form-section">
+        <TransactionForm
+          categories={categories}
+          onTransactionAdded={handleTransactionAdded}
+        />
+      </div>
+      <div className="filters-section">
+        <Filters
+          categories={categories}
+          filters={filters}
+          onFilterChange={setFilters}
+        />
+      </div>
+      <div className="table-section">
+        <TransactionTable
+          transactions={filteredTransactions}
+          loading={loading}
+          error={error}
+          onDelete={handleDelete}
+        />
+      </div>
     </div>
   );
 }
