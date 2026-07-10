@@ -1,31 +1,4 @@
-import { useState, useEffect } from 'react';
-
-function TransactionTable() {
-  const [transactions, setTransactions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-     const response = await fetch('http://localhost:3000/api/transactions');
-
-        if (!response.ok) {
-          throw new Error('Veri çekilemedi');
-        }
-
-        const data = await response.json();
-        setTransactions(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-     getData();
-  }, []);
-
+function TransactionTable({ transactions, loading, error }) {
   if (loading) {
     return <p>Yükleniyor...</p>;
   }
