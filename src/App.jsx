@@ -11,7 +11,8 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [filters, setFilters] = useState({
     category: '',
     startDate: '',
@@ -21,10 +22,13 @@ function App() {
   const getData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/transactions');
+      const response = await fetch(
+        `http://localhost:3000/api/transactions?page=${currentPage}&limit=5`
+      );
       if (!response.ok) throw new Error('Veri çekilemedi');
       const data = await response.json();
-      setTransactions(data);
+      setTransactions(data.transactions);
+      setTotalPages(data.pagination.totalPages);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -47,7 +51,7 @@ function App() {
   useEffect(() => {
     getData();
     getCategories();
-  }, []);
+  }, [currentPage]);
 
   const handleTransactionAdded = (newTransaction) => {
     setTransactions((prev) => [...prev, newTransaction]);
@@ -108,22 +112,34 @@ function App() {
         />
       </div>
       <div className="table-section">
-        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-          <a
-            href="http://localhost:3000/api/transactions/export/csv"
-            download
-          >
-            <button type="button" style={{ fontSize: '0.85rem', padding: '0.4rem 0.9rem' }}>
-              CSV Olarak İndir
-            </button>
-          </a>
-        </div>
         <TransactionTable
           transactions={filteredTransactions}
           loading={loading}
           error={error}
           onDelete={handleDelete}
         />
+
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ← Önceki
+          </button>
+
+          <span>
+            Sayfa {currentPage} / {totalPages}
+          </span>
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Sonraki →
+          </button>
+        </div>
       </div>
     </div>
   );
