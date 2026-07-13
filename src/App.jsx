@@ -88,7 +88,7 @@ function App() {
     });
   }, [transactions, filters]);
 
-   return (
+  return (
     <div className="app">
       <Navbar />
       <div className="dashboard-section">
@@ -108,6 +108,16 @@ function App() {
         />
       </div>
       <div className="table-section">
+        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+          <a
+            href="http://localhost:3000/api/transactions/export/csv"
+            download
+          >
+            <button type="button" style={{ fontSize: '0.85rem', padding: '0.4rem 0.9rem' }}>
+              CSV Olarak İndir
+            </button>
+          </a>
+        </div>
         <TransactionTable
           transactions={filteredTransactions}
           loading={loading}

@@ -110,6 +110,18 @@ function Dashboard({ transactions }) {
         </span>
       </div>
 
+      {summary.categoryBreakdown.some((c) => c.isOverBudget) && (
+        <div style={{ marginBottom: '1rem' }}>
+          {summary.categoryBreakdown
+            .filter((c) => c.isOverBudget)
+            .map((c) => (
+              <p key={c.categoryId} style={{ color: '#ff5555', fontWeight: 'bold' }}>
+                ⚠️ {c.categoryName} kategorisinde bütçe limiti aşıldı! ({c.total} / {c.monthlyBudgetLimit} TRY)
+              </p>
+            ))}
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
         <div style={{ width: '300px' }}>
           <h3>Kategori Bazlı Harcama</h3>
