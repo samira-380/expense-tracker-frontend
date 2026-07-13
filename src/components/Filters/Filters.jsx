@@ -8,8 +8,7 @@ function Filters({ categories, filters, onFilterChange }) {
   };
 
   return (
-    <div style={{ marginBottom: '1rem' }}>
-      <label>Kategori</label>
+<div className="flex flex-col md:flex-row md:flex-wrap gap-4 md:items-center mb-4">      <label>Kategori</label>
       <select name="category" value={filters.category} onChange={handleChange}>
         <option value="">Tümü</option>
         {categories.map((cat) => (

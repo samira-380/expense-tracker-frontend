@@ -54,8 +54,7 @@ function TransactionForm({ categories, onTransactionAdded }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+<form onSubmit={handleSubmit} className="flex flex-col md:flex-row md:flex-wrap gap-4 md:items-end">      <div>
         <label>Tutar</label>
         <input
           type="number"

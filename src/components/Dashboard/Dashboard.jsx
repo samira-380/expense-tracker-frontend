@@ -122,7 +122,7 @@ function Dashboard({ transactions }) {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+   <div className="flex flex-col md:flex-row gap-8">
         <div style={{ width: '300px' }}>
           <h3>Kategori Bazlı Harcama</h3>
           <Pie data={pieData} />
