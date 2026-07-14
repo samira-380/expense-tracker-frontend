@@ -14,6 +14,7 @@ import {
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
 
 function Dashboard({ transactions }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +22,7 @@ function Dashboard({ transactions }) {
   useEffect(() => {
     const getSummary = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/summary');
+const response = await fetch(`${API_URL}/api/summary`);
         if (!response.ok) throw new Error('Özet verisi çekilemedi');
         const data = await response.json();
         setSummary(data);

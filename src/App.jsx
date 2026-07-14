@@ -7,6 +7,7 @@ import TransactionForm from './components/TransactionForm/TransactionForm';
 import Filters from './components/Filters/Filters';
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [transactions, setTransactions] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,9 +23,7 @@ function App() {
   const getData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(
-        `http://localhost:3000/api/transactions?page=${currentPage}&limit=5`
-      );
+      const response = await fetch(`${API_URL}/api/transactions?page=${currentPage}&limit=5`);
       if (!response.ok) throw new Error('Veri çekilemedi');
       const data = await response.json();
       setTransactions(data.transactions);
@@ -37,44 +36,41 @@ function App() {
     }
   };
 
-  const getCategories = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/categories');
-      if (!response.ok) throw new Error('Kategoriler çekilemedi');
-      const data = await response.json();
-      setCategories(data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+ const getCategories = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/categories`);
+    if (!response.ok) throw new Error('Kategoriler çekilemedi');
+    const data = await response.json();
+    setCategories(data);
+  } catch (err) {
+    console.error(err.message);
+  }
+};
 
   useEffect(() => {
     getData();
     getCategories();
   }, [currentPage]);
 
-  const handleTransactionAdded = (newTransaction) => {
-    setTransactions((prev) => [...prev, newTransaction]);
-  };
+const handleTransactionAdded = () => {
+  getData();
+};
+ const handleDelete = async (id) => {
+  if (!window.confirm('Bu işlemi silmek istediğine emin misin?')) return;
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Bu işlemi silmek istediğine emin misin?')) return;
+  const previousTransactions = transactions;
+  setTransactions((prev) => prev.filter((t) => t._id !== id));
 
-    const previousTransactions = transactions;
-    // Optimistic UI: önce ekrandan kaldır
-    setTransactions((prev) => prev.filter((t) => t._id !== id));
-
-    try {
-      const response = await fetch(`http://localhost:3000/api/transactions/${id}`, {
-        method: 'DELETE'
-      });
-      if (!response.ok) throw new Error('Silinemedi');
-    } catch (err) {
-      // Hata olursa eski haline geri dön
-      setTransactions(previousTransactions);
-      alert('Silme başarısız oldu, tekrar deneyin.');
-    }
-  };
+  try {
+    const response = await fetch(`${API_URL}/api/transactions/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Silinemedi');
+  } catch (err) {
+    setTransactions(previousTransactions);
+    alert('Silme başarısız oldu, tekrar deneyin.');
+  }
+};
 
   // Filtrelenmiş listeyi hesapla — sadece transactions veya filters değişince yeniden hesaplanır
   const filteredTransactions = useMemo(() => {
@@ -112,6 +108,14 @@ function App() {
         />
       </div>
       <div className="table-section">
+  <div className="flex justify-end mb-4">
+    <a
+     href={`${API_URL}/api/transactions/export/csv`}
+      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+    >
+      CSV İndir
+    </a>
+</div>
         <TransactionTable
           transactions={filteredTransactions}
           loading={loading}
